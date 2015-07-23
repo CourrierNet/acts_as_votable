@@ -104,8 +104,7 @@ module ActsAsVotable
       if vote.save
         self.vote_registered = true if last_update != vote.updated_at
         # PATCH
-        options[:vote_scope] = nil
-        update_cached_votes options[:vote_scope]
+        update_cached_votes nil
         return true
       else
         self.vote_registered = false
@@ -121,8 +120,7 @@ module ActsAsVotable
       return true if _votes_.size == 0
       _votes_.each(&:destroy)
       # PATCH
-      options[:vote_scope] = nil
-      update_cached_votes options[:vote_scope]
+      update_cached_votes nil
       self.vote_registered = false if votes_for.count == 0
       return true
     end
@@ -135,7 +133,7 @@ module ActsAsVotable
       self.vote_by :voter => voter, :vote => false, :vote_scope => options[:vote_scope], :vote_weight => options[:vote_weight]
     end
 
-    def unvote_by  voter, options = {}
+    def unvote_by voter, options = {}
       self.unvote :voter => voter, :vote_scope => options[:vote_scope] #Does not need vote_weight since the votes_for are anyway getting destroyed
     end
 
