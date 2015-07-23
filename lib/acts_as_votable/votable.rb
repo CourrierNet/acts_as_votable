@@ -103,6 +103,8 @@ module ActsAsVotable
 
       if vote.save
         self.vote_registered = true if last_update != vote.updated_at
+        # PATCH
+        options[:vote_scope] = nil
         update_cached_votes options[:vote_scope]
         return true
       else
@@ -118,7 +120,9 @@ module ActsAsVotable
 
       return true if _votes_.size == 0
       _votes_.each(&:destroy)
-      update_cached_votes args[:vote_scope]
+      # PATCH
+      options[:vote_scope] = nil
+      update_cached_votes options[:vote_scope]
       self.vote_registered = false if votes_for.count == 0
       return true
     end
@@ -266,6 +270,7 @@ module ActsAsVotable
 
     # counting
     def count_votes_total skip_cache = false, vote_scope = nil
+      vote_scope = nil
       if !skip_cache && self.respond_to?(scope_cache_field :cached_votes_total, vote_scope)
         return self.send(scope_cache_field :cached_votes_total, vote_scope)
       end
